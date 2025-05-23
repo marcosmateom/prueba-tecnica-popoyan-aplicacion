@@ -36,18 +36,35 @@ class UserDetailScreen extends StatelessWidget {
               .toList();
 
           if (comments.isEmpty) {
-            return const Center(child: Text("No comments found."));
+            return RefreshIndicator(
+              onRefresh: () async {
+                await refetch?.call();
+              },
+              child: ListView(
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(child: Text("No comments found.")),
+                  ),
+                ],
+              ),
+            );
           }
 
-          return ListView.builder(
-            itemCount: comments.length,
-            itemBuilder: (context, index) {
-              final comment = comments[index];
-              return ListTile(
-                title: Text("Comment #${comment.id}"),
-                subtitle: Text(comment.content),
-              );
+          return RefreshIndicator(
+            onRefresh: () async {
+              await refetch?.call();
             },
+            child: ListView.builder(
+              itemCount: comments.length,
+              itemBuilder: (context, index) {
+                final comment = comments[index];
+                return ListTile(
+                  title: Text("Comment #${comment.id}"),
+                  subtitle: Text(comment.content),
+                );
+              },
+            ),
           );
         },
       ),

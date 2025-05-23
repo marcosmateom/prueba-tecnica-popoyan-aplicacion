@@ -14,8 +14,7 @@ class UserListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Users")),
       body: Query(
-        options: QueryOptions(document: gql(UserQueries.getUsers),
-),
+        options: QueryOptions(document: gql(UserQueries.getUsers)),
         builder: (result, {fetchMore, refetch}) {
           if (result.isLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -31,23 +30,28 @@ class UserListScreen extends StatelessWidget {
               .map((userJson) => User.fromJson(userJson))
               .toList();
 
-          return ListView.builder(
-            itemCount: users.length,
-            itemBuilder: (_, index) {
-              final user = users[index];
-              return ListTile(
-                title: Text(user.name),
-                subtitle: Text(user.email),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => UserDetailScreen(userId: user.id),
-                    ),
-                  );
-                },
-              );
+          return RefreshIndicator(
+            onRefresh: () async {
+              await refetch?.call();
             },
+            child: ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (_, index) {
+                final user = users[index];
+                return ListTile(
+                  title: Text(user.name),
+                  subtitle: Text(user.email),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserDetailScreen(userId: user.id),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           );
         },
       ),
