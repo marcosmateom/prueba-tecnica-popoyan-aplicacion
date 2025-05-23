@@ -5,8 +5,10 @@ GraphQLClient getGraphQLClient() {
     'http://192.168.0.89:3000/graphql',
   );
 
-  return GraphQLClient(
+  final client = GraphQLClient(
     link: httpLink,
     cache: GraphQLCache(store: InMemoryStore()),
   );
+  client.cache.store.reset();
+  return client;
 }

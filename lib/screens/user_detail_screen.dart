@@ -3,7 +3,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import '../graphql/queries.dart';
 
 class UserDetailScreen extends StatelessWidget {
-  final String userId;
+  final int userId;
 
   const UserDetailScreen({super.key, required this.userId});
 
@@ -22,7 +22,9 @@ class UserDetailScreen extends StatelessWidget {
           }
 
           if (result.hasException) {
-            return Center(child: Text('Error: ${result.exception.toString()}'));
+            return Center(
+              child: Text('Error: ${result.exception.toString()}'),
+            );
           }
 
           final comments = result.data?['user']?['comments'] ?? [];

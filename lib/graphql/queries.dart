@@ -9,7 +9,7 @@ const String getUsersQuery = r'''
 ''';
 
 const String getUserCommentsQuery = r'''
-  query GetComments($userId: ID!) {
+  query GetComments($userId: Int!) {
     user(id: $userId) {
       comments {
         id
@@ -18,3 +18,6 @@ const String getUserCommentsQuery = r'''
     }
   }
 ''';
+
+
+
