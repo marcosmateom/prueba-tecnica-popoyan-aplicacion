@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import '../graphql/queries.dart';
+import '../graphql/user_queries.dart';
+import '../models/comment.dart';
+import '../widgets/error_widget.dart';
+import '../utils/error_utils.dart';
 
 class UserDetailScreen extends StatelessWidget {
   final int userId;
@@ -13,7 +16,7 @@ class UserDetailScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('User Comments')),
       body: Query(
         options: QueryOptions(
-          document: gql(getUserCommentsQuery),
+          document: gql(UserQueries.getUserComments),
           variables: {'userId': userId},
         ),
         builder: (result, {fetchMore, refetch}) {
@@ -22,12 +25,15 @@ class UserDetailScreen extends StatelessWidget {
           }
 
           if (result.hasException) {
-            return Center(
-              child: Text('Error: ${result.exception.toString()}'),
-            );
+            final message = getFriendlyErrorMessage(result.exception!);
+            return ErrorDisplay(message: message, onRetry: refetch);
           }
 
-          final comments = result.data?['user']?['comments'] ?? [];
+          final commentsJson =
+              result.data?['user']?['comments'] as List<dynamic>? ?? [];
+          final comments = commentsJson
+              .map((json) => Comment.fromJson(json))
+              .toList();
 
           if (comments.isEmpty) {
             return const Center(child: Text("No comments found."));
@@ -38,8 +44,8 @@ class UserDetailScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final comment = comments[index];
               return ListTile(
-                title: Text("Comment #${comment['id']}"),
-                subtitle: Text(comment['content']),
+                title: Text("Comment #${comment.id}"),
+                subtitle: Text(comment.content),
               );
             },
           );
