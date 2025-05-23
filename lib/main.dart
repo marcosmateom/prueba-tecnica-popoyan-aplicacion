@@ -4,12 +4,13 @@ import 'screens/user_list_screen.dart';
 import 'graphql/client.dart';
 
 void main() async {
-  await initHiveForFlutter(); // Needed for graphql_flutter cache
+  await initHiveForFlutter();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final ValueNotifier<GraphQLClient> client = ValueNotifier(getGraphQLClient());
+  final ValueNotifier<GraphQLClient> client = 
+      ValueNotifier(GraphQLService().client);
 
   MyApp({super.key});
 
